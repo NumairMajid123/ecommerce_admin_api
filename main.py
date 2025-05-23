@@ -1,26 +1,13 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
-import os
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
-
-# Database configuration
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/ecommerce_admin")
-
-# Create SQLAlchemy engine
-engine = create_engine(DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+from app.database import engine, Base, get_db
+from strawberry.fastapi import GraphQLRouter
+from app.graphql.schema import schema
 
 # Initialize FastAPI app
 app = FastAPI(
     title="E-commerce Admin API",
-    description="API for e-commerce admin dashboard with sales analytics",
+    description="API for e-commerce admin dashboard with sales analytics and GraphQL support",
     version="1.0.0"
 )
 
@@ -32,14 +19,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Dependency to get database session
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 # Import models and create tables
 from app.models.sales import Base as SalesBase
@@ -53,10 +32,19 @@ from app.routers.inventory import router as inventory_router
 app.include_router(sales_router)
 app.include_router(inventory_router)
 
+# Add GraphQL endpoint
+graphql_app = GraphQLRouter(schema)
+app.include_router(graphql_app, prefix="/graphql")
+
 # Root endpoint
 @app.get("/")
 async def root():
-    return {"message": "Welcome to E-commerce Admin API"}
+    return {
+        "message": "Welcome to E-commerce Admin API",
+        "docs": "/docs",
+        "redoc": "/redoc",
+        "graphql": "/graphql"
+    }
 
 if __name__ == "__main__":
     import uvicorn
