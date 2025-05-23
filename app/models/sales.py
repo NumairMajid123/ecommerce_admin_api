@@ -28,4 +28,6 @@ class Product(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
-    sales = relationship("Sale", back_populates="product") 
+    sales = relationship("Sale", back_populates="product")
+    inventory_logs = relationship("InventoryLog", back_populates="product")
+    low_stock_alert = relationship("LowStockAlert", back_populates="product", uselist=False) 

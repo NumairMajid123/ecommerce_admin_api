@@ -43,11 +43,15 @@ def get_db():
 
 # Import models and create tables
 from app.models.sales import Base as SalesBase
+from app.models.inventory import Base as InventoryBase
 SalesBase.metadata.create_all(bind=engine)
+InventoryBase.metadata.create_all(bind=engine)
 
 # Import and include routers
 from app.routers.sales import router as sales_router
+from app.routers.inventory import router as inventory_router
 app.include_router(sales_router)
+app.include_router(inventory_router)
 
 # Root endpoint
 @app.get("/")
