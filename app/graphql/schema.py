@@ -2,9 +2,9 @@ import strawberry
 from typing import List, Optional
 from datetime import datetime
 from .types import (
-    Product, Sale, InventoryLog, LowStockAlert,
-    SalesAnalytics, CategoryAnalytics,
-    ProductInput, SaleInput, InventoryUpdateInput, LowStockAlertInput
+  Product, Sale, InventoryLog, LowStockAlert,
+  SalesAnalytics, CategoryAnalytics,
+  ProductInput, SaleInput, InventoryUpdateInput, LowStockAlertInput
 )
 from .resolvers import (
     get_products, get_product, get_sales,
@@ -74,16 +74,16 @@ class Mutation:
 
     @strawberry.mutation
     async def update_inventory(
-        self,
-        input: InventoryUpdateInput
+      self,
+      input: InventoryUpdateInput
     ) -> InventoryLog:
-        return await update_inventory(input)
+      return await update_inventory(input)
 
     @strawberry.mutation
     async def set_low_stock_alert(
-        self,
-        input: LowStockAlertInput
+      self,
+      input: LowStockAlertInput
     ) -> LowStockAlert:
-        return await set_low_stock_alert(input)
+      return await set_low_stock_alert(input)
 
 schema = strawberry.Schema(query=Query, mutation=Mutation) 

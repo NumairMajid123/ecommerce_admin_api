@@ -368,3 +368,114 @@ The schema includes the following optimized query patterns:
 
 4. **Alert Monitoring**
    - Active alerts: `idx_active_alerts`
+
+## Usage Examples
+
+### Adding Products
+
+You can add products using either the REST API or GraphQL interface.
+
+#### Using REST API
+
+```bash
+# Add a new product using cURL
+curl -X POST "http://localhost:8000/products" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Wireless Gaming Mouse",
+    "category": "Electronics",
+    "price": 59.99,
+    "stock": 100
+  }'
+```
+
+Expected Response:
+```json
+{
+  "id": 13,
+  "name": "Wireless Gaming Mouse",
+  "category": "Electronics",
+  "price": 59.99,
+  "stock": 100,
+  "created_at": "2024-02-20T10:30:00",
+  "updated_at": "2024-02-20T10:30:00"
+}
+```
+
+#### Using GraphQL
+
+You can use the GraphQL Playground at `http://localhost:8000/graphql` with this mutation:
+
+```graphql
+mutation CreateProduct {
+  createProduct(input: {
+    name: "Wireless Gaming Mouse"
+    category: "Electronics"
+    price: 59.99
+    stock: 100
+  }) {
+    id
+    name
+    category
+    price
+    stock
+    created_at
+  }
+}
+```
+
+Expected Response:
+```json
+{
+  "data": {
+    "createProduct": {
+      "id": 13,
+      "name": "Wireless Gaming Mouse",
+      "category": "Electronics",
+      "price": 59.99,
+      "stock": 100,
+      "created_at": "2024-02-20T10:30:00"
+    }
+  }
+}
+```
+
+#### Product Fields
+
+| Field    | Type    | Required | Description                    |
+|----------|---------|----------|--------------------------------|
+| name     | string  | Yes      | Product name                   |
+| category | string  | Yes      | Product category               |
+| price    | float   | Yes      | Product price (must be > 0)    |
+| stock    | integer | Yes      | Initial stock quantity (≥ 0)   |
+
+#### Available Categories
+- Electronics
+- Home & Kitchen
+- Fashion
+- Books
+- Sports & Outdoors
+- Beauty & Personal Care
+- Toys & Games
+- Grocery
+
+#### Error Handling
+
+The API will return appropriate error messages for:
+- Missing required fields
+- Invalid price (must be positive)
+- Invalid stock quantity (must be non-negative)
+- Invalid category
+
+Example error response:
+```json
+{
+  "detail": [
+    {
+      "loc": ["body", "price"],
+      "msg": "Price must be greater than 0",
+      "type": "value_error"
+    }
+  ]
+}
+```
